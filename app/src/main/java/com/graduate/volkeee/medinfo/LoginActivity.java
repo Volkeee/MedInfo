@@ -1,5 +1,6 @@
 package com.graduate.volkeee.medinfo;
 
+import android.content.Intent;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -73,9 +74,17 @@ public class LoginActivity extends AppCompatActivity {
     void authorizeRequest(String email, String password) {
         StringRequest authorizationRequest = new StringRequest(Request.Method.POST, authorizationURL, response -> {
                     Log.d("Auth token", response);
-                    authTokenReceived(response);
-                }, error -> {
-                    Log.d("Auth Error", "Authorization error:\n" + error);
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        if (handleResponse(response)) {
+                            authTokenReceived(jsonResponse);
+                        } else
+                            authError(jsonResponse);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+        }, error -> {
+                    Log.e("Auth Error", "Authorization error:\n" + error);
                 }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -90,13 +99,33 @@ public class LoginActivity extends AppCompatActivity {
         mRequestQueue.add(authorizationRequest);
     }
 
-    @UiThread
-    void authTokenReceived(String string) {
-        Toast.makeText(this, string, Toast.LENGTH_SHORT).show();
+    boolean handleResponse(String string) {
         try {
-            JSONObject json = new JSONObject(string);
-            String key = json.getString("access_token");
+            JSONObject response = new JSONObject(string);
+
+            return !response.has("error_code");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @UiThread
+    void authTokenReceived(JSONObject jsonObject) {
+        try {
+            String key = jsonObject.getString("access_token");
             authTokenPreferences.edit().authToken().put(key).apply();
+
+            Toast.makeText(this, "Succesfully logged in as ", Toast.LENGTH_SHORT).show();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @UiThread
+    void authError(JSONObject jsonObject) {
+        try {
+            Toast.makeText(this, jsonObject.get("error_msg").toString(), Toast.LENGTH_SHORT).show();
         } catch (JSONException e) {
             e.printStackTrace();
         }

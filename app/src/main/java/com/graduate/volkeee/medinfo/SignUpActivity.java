@@ -1,27 +1,42 @@
 package com.graduate.volkeee.medinfo;
 
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.net.Uri;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
+
+import com.graduate.volkeee.medinfo.model.Account;
+import com.graduate.volkeee.medinfo.views.NonSwipeableViewPager;
+import com.mikhaellopez.circularimageview.CircularImageView;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_sign_up)
-public class SignUpActivity extends AppCompatActivity {
-    @ViewById(R.id.toolbar)
-    Toolbar toolbar;
+public class SignUpActivity extends AppCompatActivity implements BasicInfoSignUpFragment.OnFragmentInteractionListener, AdditionalInfoSignUpFragment.OnFragmentInteractionListener {
+    protected Account mAccount;
+    @ViewById(R.id.user_profile_picture)
+    CircularImageView profileImage;
+
+    CustomPagerAdapter mViewPagerAdapter;
+
+    @ViewById(R.id.viewPager)
+    NonSwipeableViewPager viewPager;
 
     @AfterViews
-    void initializeToolbar() {
-        setSupportActionBar(toolbar);
+    void initializeViewPager() {
+        viewPager.setPagingEnabled(false);
+        mViewPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(mViewPagerAdapter);
+    }
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    @Click(R.id.button_next)
+    void buttonNextClick() {
+        viewPager.setCurrentItem(mViewPagerAdapter.getCurrentItemPosition() + 1);
     }
 
     @Override
@@ -34,4 +49,41 @@ public class SignUpActivity extends AppCompatActivity {
     void onBackClick() {
         onBackPressed();
     }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    private class CustomPagerAdapter extends FragmentStatePagerAdapter {
+        private final Integer NUM_ITEMS = 2;
+        private int currentPosition;
+
+        public CustomPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    currentPosition = 0;
+                    return BasicInfoSignUpFragment_.builder().build();
+                case 1:
+                    currentPosition = 1;
+                    return AdditionalInfoSignUpFragment_.builder().build();
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return NUM_ITEMS;
+        }
+
+        public int getCurrentItemPosition() {
+            return currentPosition;
+        }
+    }
+
 }
