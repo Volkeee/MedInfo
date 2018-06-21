@@ -7,14 +7,27 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Account implements Serializable
-{
+public class Account implements Serializable {
+    public static final String KEY_id = "id";
+    public static final String KEY_firstName = "first_name";
+    public static final String KEY_lastName = "last_name";
+    public static final String KEY_midName = "mid_name";
+    public static final String KEY_email = "email";
+    public static final String KEY_password = "password";
+    public static final String KEY_adress = "adress";
+    public static final String KEY_dateOfBirth = "date_of_birth";
+    public static final String KEY_phone = "phone";
+    public static final String KEY_sex = "sex";
+    public static final String KEY_utype = "utype";
+    public static final String KEY_photoPath = "photoPath";
+
 
     private Integer id;
     private String firstName;
     private String lastName;
     private String midName;
     private String email;
+    private String password;
     private String adress;
     private String dateOfBirth;
     private String phone;
@@ -26,26 +39,24 @@ public class Account implements Serializable
 
     /**
      * No args constructor for use in serialization
-     *
      */
     public Account() {
     }
 
     /**
-     *
-     * @param id An id of the account
+     * @param id          An id of the account
      * @param dateOfBirth User's date of birth
-     * @param lastName User's last name
-     * @param sex User's sex
-     * @param phone User's phone number
-     * @param address User's address
-     * @param email User's email
-     * @param midName User's middlename
-     * @param utype Type of user's account
-     * @param photoPath A link to user's profile photo
-     * @param firstName User's first name
+     * @param lastName    User's last name
+     * @param sex         User's sex
+     * @param phone       User's phone number
+     * @param address     User's address
+     * @param email       User's email
+     * @param midName     User's middlename
+     * @param utype       Type of user's account
+     * @param photoPath   A link to user's profile photo
+     * @param firstName   User's first name
      */
-    public Account(String address, String dateOfBirth, String email, String firstName, Integer id, String lastName, String midName, String phone, String photoPath, String sex, String utype) {
+    public Account(String address, String dateOfBirth, String email, String password, String firstName, Integer id, String lastName, String midName, String phone, String photoPath, String sex, String utype) {
         this.adress = address;
         this.dateOfBirth = dateOfBirth;
         this.email = email;
@@ -81,6 +92,14 @@ public class Account implements Serializable
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getFirstName() {
@@ -169,5 +188,23 @@ public class Account implements Serializable
         this.setPhotoPath(accountJson.getString("photo_path"));
         this.setSex(accountJson.getString("sex"));
         this.setUtype(accountJson.getString("utype"));
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", midName='" + midName + '\'' +
+                ", email='" + email + '\'' +
+                ", adress='" + adress + '\'' +
+                ", dateOfBirth='" + dateOfBirth + '\'' +
+                ", phone='" + phone + '\'' +
+                ", sex='" + sex + '\'' +
+                ", utype='" + utype + '\'' +
+                ", photoPath='" + photoPath + '\'' +
+                ", additionalProperties=" + additionalProperties +
+                '}';
     }
 }
